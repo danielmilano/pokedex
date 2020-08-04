@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_navigation"
+    app:startDestination="@id/pokemonListFragment">
+
+    <fragment
+        android:id="@+id/pokemonListFragment"
+        android:name="it.danielmilano.pokedex.pokemon.ui.list.PokemonListFragment"
+        android:label="@string/label_pokemon"
+        tools:layout="@layout/fragment_pokemon_list">
+        <action
+            android:id="@+id/action_pokemonListFragment_to_pokemonDetailBottomSheet"
+            app:destination="@id/pokemonDetailBottomSheet" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/pokemonDetailBottomSheet"
+        android:name="it.danielmilano.pokedex.pokemon.ui.detail.PokemonDetailFragment"
+        android:label="@string/label_pokemon_details"
+        tools:layout="@layout/fragment_pokemon_detail">
+
+        <argument
+            android:name="url"
+            app:argType="string" />
+    </dialog>
+</navigation>
