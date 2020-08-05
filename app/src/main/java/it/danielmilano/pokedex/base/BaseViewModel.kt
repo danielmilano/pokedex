@@ -5,9 +5,10 @@ import androidx.annotation.CallSuper
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import it.danielmilano.pokedex.utils.NoObserverAttachedException
 
 open class BaseViewModel<STATE, EFFECT, EVENT>(application: Application) :
-    AndroidViewModel(application), ViewModelContract<EVENT> {
+    AndroidViewModel(application), BaseViewModelContract<EVENT> {
 
     private val _viewStates: MutableLiveData<STATE> = MutableLiveData()
     fun viewStates(): LiveData<STATE> = _viewStates

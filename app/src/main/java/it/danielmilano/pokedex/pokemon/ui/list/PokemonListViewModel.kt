@@ -2,6 +2,8 @@ package it.danielmilano.pokedex.pokemon.ui.list
 
 import androidx.lifecycle.*
 import androidx.paging.PagedList
+import it.danielmilano.pokedex.database.dao.PokemonDAO
+import it.danielmilano.pokedex.database.dao.PokemonItemListDAO
 import it.danielmilano.pokedex.pokemon.model.PagedListResult
 import it.danielmilano.pokedex.pokemon.model.PokemonListItem
 import it.danielmilano.pokedex.usecase.GetPagedListUseCase

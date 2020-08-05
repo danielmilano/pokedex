@@ -13,10 +13,10 @@ import org.koin.dsl.module
 val pokemonModule = module {
 
     viewModel { PokemonListViewModel(get()) }
-    viewModel { PokemonDetailViewModel(androidApplication(), get()) }
+    viewModel { PokemonDetailViewModel(androidApplication(), get(), get()) }
 
     factory { GetPagedListUseCase(get()) }
-    single { PagedListRepository(get()) }
+    single { PagedListRepository(get(), get()) }
     single { PokemonRepository(get()) }
     factory { GetPokemonDetailUseCase(get()) }
 }

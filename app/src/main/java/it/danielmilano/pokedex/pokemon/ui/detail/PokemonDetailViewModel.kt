@@ -4,14 +4,18 @@ import android.app.Application
 import androidx.lifecycle.viewModelScope
 import it.danielmilano.pokedex.base.BaseViewModel
 import it.danielmilano.pokedex.base.DataResponse
-import it.danielmilano.pokedex.pokemon.repository.PagedListRepository
+import it.danielmilano.pokedex.database.dao.PokemonDAO
 import it.danielmilano.pokedex.usecase.GetPokemonDetailUseCase
 import kotlinx.coroutines.launch
+import kotlin.concurrent.thread
 
 class PokemonDetailViewModel(
     application: Application,
-    private val getPokemonDetailUseCase: GetPokemonDetailUseCase
-) : BaseViewModel<PokemonDetailViewState, PokemonDetailViewEffect, PokemonDetailViewEvent>(application) {
+    private val getPokemonDetailUseCase: GetPokemonDetailUseCase,
+    private val pokemonDAO: PokemonDAO
+) : BaseViewModel<PokemonDetailViewState, PokemonDetailViewEffect, PokemonDetailViewEvent>(
+    application
+) {
 
     init {
         viewState = PokemonDetailViewState(fetchStatus = FetchStatus.NotFetched, pokemon = null)
@@ -37,6 +41,9 @@ class PokemonDetailViewModel(
                     viewEffect = PokemonDetailViewEffect.ShowToast(message = result.message)
                 }
                 is DataResponse.Success -> {
+                    thread {
+                        pokemonDAO.add(result.data)
+                    }
                     viewState =
                         viewState.copy(fetchStatus = FetchStatus.Fetched, pokemon = result.data)
                 }

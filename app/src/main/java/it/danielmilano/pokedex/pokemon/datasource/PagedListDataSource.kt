@@ -4,15 +4,18 @@ import androidx.lifecycle.MutableLiveData
 import androidx.paging.PageKeyedDataSource
 import it.danielmilano.pokedex.api.PokemonApi
 import it.danielmilano.pokedex.base.BaseMutableLiveData
+import it.danielmilano.pokedex.database.dao.PokemonItemListDAO
 import it.danielmilano.pokedex.pokemon.model.PokemonListItem
 import it.danielmilano.pokedex.pokemon.model.PaginatedWrapper
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlin.concurrent.thread
 
 class PagedListDataSource(
     private val dataType: String,
-    private val api: PokemonApi
+    private val api: PokemonApi,
+    private val pokemonItemListDAO: PokemonItemListDAO
 ) : PageKeyedDataSource<String, PokemonListItem>() {
 
     val isLoading = MutableLiveData<Boolean>()
@@ -42,6 +45,9 @@ class PagedListDataSource(
                     response.body()?.let {
                         if (response.isSuccessful) {
                             if (response.isSuccessful) {
+                                thread {
+                                    pokemonItemListDAO.add(it.results)
+                                }
                                 callback.onResult(it.results, 0, it.count, it.previous, it.next)
                             } else {
                                 networkError.postValue(response.errorBody().toString())
@@ -75,6 +81,9 @@ class PagedListDataSource(
                 response.body()?.let {
                     if (response.isSuccessful) {
                         if (response.isSuccessful) {
+                            thread {
+                                pokemonItemListDAO.add(it.results)
+                            }
                             callback.onResult(it.results, it.next)
                         } else {
                             networkError.postValue(response.errorBody().toString())
