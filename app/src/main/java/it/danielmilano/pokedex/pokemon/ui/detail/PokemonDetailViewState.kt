@@ -2,7 +2,7 @@ package it.danielmilano.pokedex.pokemon.ui.detail
 
 import it.danielmilano.pokedex.pokemon.model.Pokemon
 
-data class PokemonDetailViewState(val fetchStatus: FetchStatus, val pokemon: Pokemon)
+data class PokemonDetailViewState(val fetchStatus: FetchStatus, val pokemon: Pokemon?)
 
 sealed class PokemonDetailViewEffect {
     data class ShowSnackbar(val message: String) : PokemonDetailViewEffect()
@@ -11,7 +11,7 @@ sealed class PokemonDetailViewEffect {
 
 sealed class PokemonDetailViewEvent {
     data class OnSharePokemon(val pokemon: Pokemon) : PokemonDetailViewEvent()
-    object FetchPokemonDetail : PokemonDetailViewEvent()
+    data class FetchPokemonDetail(val url: String) : PokemonDetailViewEvent()
 }
 
 sealed class FetchStatus {

@@ -30,4 +30,8 @@ abstract class BaseFragment<STATE, EFFECT, EVENT, ViewModel : BaseViewModel<STAT
     abstract fun renderViewState(viewState: STATE)
 
     abstract fun renderViewEffect(viewEffect: EFFECT)
+
+    override fun onDetach() {
+        super.onDetach()
+    }
 }

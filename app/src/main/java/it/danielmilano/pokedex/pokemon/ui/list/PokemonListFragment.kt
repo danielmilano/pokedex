@@ -14,11 +14,11 @@ import it.danielmilano.pokedex.R
 import it.danielmilano.pokedex.pokemon.adapter.PagedListAdapter
 import it.danielmilano.pokedex.databinding.FragmentPokemonListBinding
 import it.danielmilano.pokedex.pokemon.model.PokemonListItem
-import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PokemonListFragment : Fragment() {
 
-    val viewModel: PokemonListViewModel by sharedViewModel()
+    val viewModel: PokemonListViewModel by viewModel()
 
     private lateinit var binding: FragmentPokemonListBinding
 
@@ -68,7 +68,7 @@ class PokemonListFragment : Fragment() {
 
     private fun navigateToPokemonDetail(item: PokemonListItem) {
         val direction =
-            PokemonListFragmentDirections.actionPokemonListFragmentToPokemonDetailBottomSheet(item.url)
+            PokemonListFragmentDirections.actionPokemonListFragmentToPokemonDetailFragment(item.url)
         navController.navigate(direction)
     }
 }

@@ -5,6 +5,7 @@ import it.danielmilano.pokedex.pokemon.repository.PokemonRepository
 import it.danielmilano.pokedex.pokemon.ui.detail.PokemonDetailViewModel
 import it.danielmilano.pokedex.pokemon.ui.list.PokemonListViewModel
 import it.danielmilano.pokedex.usecase.GetPagedListUseCase
+import it.danielmilano.pokedex.usecase.GetPokemonDetailUseCase
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -17,4 +18,5 @@ val pokemonModule = module {
     factory { GetPagedListUseCase(get()) }
     single { PagedListRepository(get()) }
     single { PokemonRepository(get()) }
+    factory { GetPokemonDetailUseCase(get()) }
 }
