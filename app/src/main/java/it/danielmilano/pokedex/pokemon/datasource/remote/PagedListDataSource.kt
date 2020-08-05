@@ -1,4 +1,4 @@
-package it.danielmilano.pokedex.pokemon.datasource
+package it.danielmilano.pokedex.pokemon.datasource.remote
 
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PageKeyedDataSource
@@ -6,7 +6,7 @@ import it.danielmilano.pokedex.api.PokemonApi
 import it.danielmilano.pokedex.base.BaseMutableLiveData
 import it.danielmilano.pokedex.database.dao.PokemonItemListDAO
 import it.danielmilano.pokedex.pokemon.model.PokemonListItem
-import it.danielmilano.pokedex.pokemon.model.PaginatedWrapper
+import it.danielmilano.pokedex.pokemon.model.PaginatedResult
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -28,9 +28,9 @@ class PagedListDataSource(
     ) {
         isInitialLoading.postValue(true)
         api.getInitialDataList(dataType)
-            .enqueue(object : Callback<PaginatedWrapper<PokemonListItem>> {
+            .enqueue(object : Callback<PaginatedResult> {
                 override fun onFailure(
-                    call: Call<PaginatedWrapper<PokemonListItem>>,
+                    call: Call<PaginatedResult>,
                     t: Throwable
                 ) {
                     isInitialLoading.postValue(false)
@@ -38,8 +38,8 @@ class PagedListDataSource(
                 }
 
                 override fun onResponse(
-                    call: Call<PaginatedWrapper<PokemonListItem>>,
-                    response: Response<PaginatedWrapper<PokemonListItem>>
+                    call: Call<PaginatedResult>,
+                    response: Response<PaginatedResult>
                 ) {
                     isInitialLoading.postValue(false)
                     response.body()?.let {
@@ -67,15 +67,15 @@ class PagedListDataSource(
         callback: LoadCallback<String, PokemonListItem>
     ) {
         isLoading.postValue(true)
-        api.getDataList(params.key).enqueue(object : Callback<PaginatedWrapper<PokemonListItem>> {
-            override fun onFailure(call: Call<PaginatedWrapper<PokemonListItem>>, t: Throwable) {
+        api.getDataList(params.key).enqueue(object : Callback<PaginatedResult> {
+            override fun onFailure(call: Call<PaginatedResult>, t: Throwable) {
                 isLoading.postValue(false)
                 networkError.postValue(t.message)
             }
 
             override fun onResponse(
-                call: Call<PaginatedWrapper<PokemonListItem>>,
-                response: Response<PaginatedWrapper<PokemonListItem>>
+                call: Call<PaginatedResult>,
+                response: Response<PaginatedResult>
             ) {
                 isLoading.postValue(false)
                 response.body()?.let {

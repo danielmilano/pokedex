@@ -1,33 +1,43 @@
 package it.danielmilano.pokedex.pokemon.repository
 
 import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
 import it.danielmilano.pokedex.api.PokemonApi
 import it.danielmilano.pokedex.database.dao.PokemonItemListDAO
-import it.danielmilano.pokedex.pokemon.datasource.PagedListDataSourceFactory
+import it.danielmilano.pokedex.pokemon.datasource.local.PokemonListItemBoundaryCallback
 import it.danielmilano.pokedex.pokemon.model.PagedListResult
 import it.danielmilano.pokedex.pokemon.model.PokemonListItem
-import java.util.concurrent.Executors
 
-class PagedListRepository(private val pokemonApi: PokemonApi, private val pokemonItemListDAO: PokemonItemListDAO) {
+class PagedListRepository(
+    private val pokemonApi: PokemonApi,
+    private val pokemonItemListDAO: PokemonItemListDAO
+) {
 
-    fun getPagedList(dataType: String): PagedListResult<PokemonListItem> {
-        val config = androidx.paging.PagedList.Config.Builder()
+    fun getPagedList(): PagedListResult<PokemonListItem> {
+        val config = PagedList.Config.Builder()
             .setInitialLoadSizeHint(4 * 2)
             .setEnablePlaceholders(false)
             .setPageSize(4)
             .setPrefetchDistance(4)
             .build()
 
-        val pokemonListDataSourceFactory = PagedListDataSourceFactory(dataType, pokemonApi, pokemonItemListDAO)
-        val result = LivePagedListBuilder(pokemonListDataSourceFactory, config)
-            .setFetchExecutor(Executors.newFixedThreadPool(3))
-            .build()
+        val livePageListBuilder =
+            LivePagedListBuilder<Int, PokemonListItem>(
+                pokemonItemListDAO.all(),
+                config
+            )
+
+        val boundaryCallback =
+            PokemonListItemBoundaryCallback(
+                pokemonApi,
+                pokemonItemListDAO
+            )
 
         return PagedListResult(
-            result,
-            pokemonListDataSourceFactory.isInitialLoading,
-            pokemonListDataSourceFactory.isLoading,
-            pokemonListDataSourceFactory.networkError
+            livePageListBuilder.setBoundaryCallback(boundaryCallback).build(),
+            boundaryCallback.isInitialLoading,
+            boundaryCallback.isLoading,
+            boundaryCallback.networkError
         )
     }
 }

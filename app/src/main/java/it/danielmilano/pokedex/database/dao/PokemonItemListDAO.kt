@@ -1,12 +1,12 @@
 package it.danielmilano.pokedex.database.dao
 
 import androidx.lifecycle.LiveData
+import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import it.danielmilano.pokedex.pokemon.model.Pokemon
 import it.danielmilano.pokedex.pokemon.model.PokemonListItem
 
 @Dao
@@ -19,7 +19,7 @@ interface PokemonItemListDAO {
     fun getByUrl(url: String?): LiveData<PokemonListItem>
 
     @Query("SELECT * FROM pokemonlistitem")
-    fun all(): LiveData<List<PokemonListItem>>
+    fun all(): DataSource.Factory<Int, PokemonListItem>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun add(pokemon: List<PokemonListItem>)

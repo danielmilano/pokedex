@@ -40,6 +40,6 @@ class PokemonListViewModel(
     }
 
     private fun getPokemonList() {
-        pagedListResult.value = getListUseCase("pokemon")
+        pagedListResult.value = getListUseCase()
     }
 }

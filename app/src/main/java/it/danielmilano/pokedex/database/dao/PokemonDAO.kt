@@ -1,6 +1,7 @@
 package it.danielmilano.pokedex.database.dao
 
 import androidx.lifecycle.LiveData
+import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert

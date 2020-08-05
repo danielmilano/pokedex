@@ -1,4 +1,4 @@
-package it.danielmilano.pokedex.pokemon.datasource
+package it.danielmilano.pokedex.pokemon.datasource.remote
 
 import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
@@ -6,13 +6,19 @@ import it.danielmilano.pokedex.api.PokemonApi
 import it.danielmilano.pokedex.database.dao.PokemonItemListDAO
 import it.danielmilano.pokedex.pokemon.model.PokemonListItem
 
+//
 class PagedListDataSourceFactory(
     dataType: String,
     api: PokemonApi,
     pokemonItemListDAO: PokemonItemListDAO
 ) : DataSource.Factory<String, PokemonListItem>() {
 
-    private var pagedListDataSource = PagedListDataSource(dataType, api, pokemonItemListDAO)
+    private var pagedListDataSource =
+        PagedListDataSource(
+            dataType,
+            api,
+            pokemonItemListDAO
+        )
 
     val isLoading: LiveData<Boolean> = pagedListDataSource.isLoading
 

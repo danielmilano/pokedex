@@ -11,7 +11,8 @@ import it.danielmilano.pokedex.utils.ListStringConverter
 @TypeConverters(ListStringConverter::class)
 data class PokemonListItem(
     @PrimaryKey @NonNull val name: String,
-    val url: String
+    val url: String,
+    var nextPage : String?
 ) {
     companion object {
         val DIFF_CALLBACK: DiffUtil.ItemCallback<PokemonListItem> = object : DiffUtil.ItemCallback<PokemonListItem>() {
