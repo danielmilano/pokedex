@@ -27,7 +27,7 @@ class PagedListDataSource(
         callback: LoadInitialCallback<String, PokemonListItem>
     ) {
         isInitialLoading.postValue(true)
-        api.getInitialDataList(dataType)
+        api.getInitialDataList()
             .enqueue(object : Callback<PaginatedResult> {
                 override fun onFailure(
                     call: Call<PaginatedResult>,

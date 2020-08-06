@@ -63,6 +63,14 @@ class PokemonListFragment : Fragment() {
             pokemonList.observe(viewLifecycleOwner, Observer {
                 binding.adapter?.submitList(it)
             })
+
+            endReached.observe(viewLifecycleOwner, Observer {
+                Toast.makeText(
+                    context,
+                    getString(R.string.message_end_reached),
+                    Toast.LENGTH_SHORT
+                ).show()
+            })
         }
     }
 

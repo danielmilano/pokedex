@@ -35,6 +35,11 @@ class PokemonListViewModel(
             it.isLoading
         }
 
+    val endReached: LiveData<Boolean> =
+        Transformations.switchMap(pagedListResult) {
+            it.endReached
+        }
+
     init {
         getPokemonList()
     }

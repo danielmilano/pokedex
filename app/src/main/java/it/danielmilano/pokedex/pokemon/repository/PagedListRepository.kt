@@ -37,7 +37,8 @@ class PagedListRepository(
             livePageListBuilder.setBoundaryCallback(boundaryCallback).build(),
             boundaryCallback.isInitialLoading,
             boundaryCallback.isLoading,
-            boundaryCallback.networkError
-        )
+            boundaryCallback.networkError,
+            boundaryCallback.endReached
+        ) { boundaryCallback.retryAllFailed() }
     }
 }

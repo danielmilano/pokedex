@@ -9,8 +9,8 @@ import retrofit2.http.Url
 
 interface PokemonApi {
 
-    @GET("{data_type}")
-    fun getInitialDataList(@Path(value = "data_type") dataType: String): Call<PaginatedResult>
+    @GET("pokemon")
+    fun getInitialDataList(): Call<PaginatedResult>
 
     @GET
     fun getDataList(@Url url: String): Call<PaginatedResult>
