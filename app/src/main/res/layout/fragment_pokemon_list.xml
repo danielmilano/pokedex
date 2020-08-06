@@ -10,10 +10,6 @@
         <variable
             name="adapter"
             type="it.danielmilano.pokedex.pokemon.adapter.PagedListAdapter" />
-
-        <variable
-            name="viewModel"
-            type="it.danielmilano.pokedex.pokemon.ui.list.PokemonListViewModel" />
     </data>
 
 
@@ -43,7 +39,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:visibility="@{safeUnbox(viewModel.isInitialLoading) ? View.VISIBLE : View.GONE}"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

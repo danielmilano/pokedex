@@ -9,4 +9,6 @@
     <string name="label_weight">Weight:</string>
     <string name="weight_value">%.2f Kilogram</string>
     <string name="label_base_exp">Base Exp:</string>
+    <string name="retry">Retry</string>
+    <string name="network_not_available">"No Internet connection"</string>
 </resources>

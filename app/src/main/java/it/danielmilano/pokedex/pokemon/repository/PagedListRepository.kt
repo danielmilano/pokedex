@@ -7,10 +7,12 @@ import it.danielmilano.pokedex.database.dao.PokemonItemListDAO
 import it.danielmilano.pokedex.pokemon.datasource.local.PokemonListItemBoundaryCallback
 import it.danielmilano.pokedex.pokemon.model.PagedListResult
 import it.danielmilano.pokedex.pokemon.model.PokemonListItem
+import kotlinx.coroutines.CoroutineScope
 
 class PagedListRepository(
     private val pokemonApi: PokemonApi,
-    private val pokemonItemListDAO: PokemonItemListDAO
+    private val pokemonItemListDAO: PokemonItemListDAO,
+    private val coroutineScope: CoroutineScope
 ) {
 
     fun getPagedList(): PagedListResult<PokemonListItem> {
@@ -30,15 +32,16 @@ class PagedListRepository(
         val boundaryCallback =
             PokemonListItemBoundaryCallback(
                 pokemonApi,
-                pokemonItemListDAO
+                pokemonItemListDAO,
+                coroutineScope
             )
 
+        val result = livePageListBuilder.setBoundaryCallback(boundaryCallback).build()
+
         return PagedListResult(
-            livePageListBuilder.setBoundaryCallback(boundaryCallback).build(),
-            boundaryCallback.isInitialLoading,
-            boundaryCallback.isLoading,
-            boundaryCallback.networkError,
+            result,
+            boundaryCallback.networkState,
             boundaryCallback.endReached
-        ) { boundaryCallback.retryAllFailed() }
+        ) { boundaryCallback.retryOnFailed() }
     }
 }

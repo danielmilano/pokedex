@@ -6,10 +6,8 @@ import androidx.paging.PagedList
 import it.danielmilano.pokedex.base.BaseMutableLiveData
 
 class PagedListResult<T>(
-        val result: LiveData<PagedList<T>> = MutableLiveData<PagedList<T>>(),
-        val isInitialLoading: LiveData<Boolean> = MutableLiveData(),
-        val isLoading: LiveData<Boolean> = MutableLiveData(),
-        val networkError: LiveData<String?> = BaseMutableLiveData(),
-        val endReached: LiveData<Boolean> = MutableLiveData(),
-        val retry: () -> Unit
+    val result: LiveData<PagedList<T>> = MutableLiveData<PagedList<T>>(),
+    val networkState: LiveData<NetworkState> = BaseMutableLiveData(),
+    val endReached: LiveData<Boolean> = BaseMutableLiveData(),
+    val retry: () -> Unit
 )

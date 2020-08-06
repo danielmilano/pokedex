@@ -8,16 +8,21 @@ import androidx.recyclerview.widget.RecyclerView
 import it.danielmilano.pokedex.R
 import it.danielmilano.pokedex.databinding.ItemLoaderBinding
 import it.danielmilano.pokedex.databinding.ItemPokemonBinding
+import it.danielmilano.pokedex.pokemon.model.NetworkState
 import it.danielmilano.pokedex.pokemon.model.PokemonListItem
+import it.danielmilano.pokedex.pokemon.model.Status
 
-class PagedListAdapter(private val onItemClick: (PokemonListItem) -> Unit) :
+class PagedListAdapter(
+    private val onItemClick: (PokemonListItem) -> Unit,
+    private val retryCallback: () -> Unit
+) :
     PagedListAdapter<PokemonListItem, it.danielmilano.pokedex.pokemon.adapter.PagedListAdapter.ItemsViewHolder>(
         PokemonListItem.DIFF_CALLBACK
     ) {
 
-    private var isLoading: Boolean = false
+    private var networkState: NetworkState = NetworkState.IDLE
 
-    private fun hasExtraRow() = isLoading
+    private fun hasExtraRow() = networkState == NetworkState.LOADING
 
     override fun getItemViewType(position: Int): Int {
         return if (hasExtraRow() && position == itemCount - 1) {
@@ -26,7 +31,6 @@ class PagedListAdapter(private val onItemClick: (PokemonListItem) -> Unit) :
             R.layout.item_pokemon
         }
     }
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemsViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -57,15 +61,15 @@ class PagedListAdapter(private val onItemClick: (PokemonListItem) -> Unit) :
                 }
             }
             R.layout.item_loader -> {
-                (holder as LoaderItemHolder).bind(isLoading)
+                (holder as LoaderItemHolder).bind(networkState, retryCallback)
             }
         }
     }
 
-    fun loading(isLoading: Boolean) {
-        val previousState = this.isLoading
+    fun setNetworkState(newNetworkState: NetworkState) {
+        val previousState = this.networkState
         val hadExtraRow = hasExtraRow()
-        this.isLoading = isLoading
+        this.networkState = newNetworkState
         val hasExtraRow = hasExtraRow()
         if (hadExtraRow != hasExtraRow) {
             if (hadExtraRow) {
@@ -73,7 +77,7 @@ class PagedListAdapter(private val onItemClick: (PokemonListItem) -> Unit) :
             } else {
                 notifyItemInserted(super.getItemCount())
             }
-        } else if (hasExtraRow && previousState != isLoading) {
+        } else if (hasExtraRow && previousState != newNetworkState) {
             notifyItemChanged(itemCount - 1)
         }
     }
@@ -99,8 +103,12 @@ class PagedListAdapter(private val onItemClick: (PokemonListItem) -> Unit) :
         private val binding: ItemLoaderBinding
     ) : ItemsViewHolder(binding.root) {
 
-        fun bind(isLoading: Boolean) {
-            binding.progressBar.visibility = toVisibility(isLoading)
+        fun bind(networkState: NetworkState?, retryCallback: () -> Unit) {
+            binding.progressBar.visibility = toVisibility(networkState?.status == Status.LOADING)
+            binding.retry.visibility = toVisibility(networkState?.status == Status.ERROR)
+            binding.error.visibility = toVisibility(networkState?.msg != null)
+            binding.error.text = binding.error.context.getString(R.string.network_not_available)
+            binding.retry.setOnClickListener { retryCallback() }
         }
 
         private fun toVisibility(constraint: Boolean): Int {

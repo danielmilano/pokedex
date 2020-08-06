@@ -14,6 +14,7 @@ import it.danielmilano.pokedex.R
 import it.danielmilano.pokedex.pokemon.adapter.PagedListAdapter
 import it.danielmilano.pokedex.databinding.FragmentPokemonListBinding
 import it.danielmilano.pokedex.pokemon.model.PokemonListItem
+import it.danielmilano.pokedex.pokemon.model.Status
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PokemonListFragment : Fragment() {
@@ -31,9 +32,8 @@ class PokemonListFragment : Fragment() {
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = FragmentPokemonListBinding.inflate(inflater, container, false)
-        binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
-        binding.adapter = PagedListAdapter(this::navigateToPokemonDetail)
+        binding.adapter = PagedListAdapter(this::navigateToPokemonDetail) { viewModel.retry() }
         return binding.root
     }
 
@@ -44,20 +44,21 @@ class PokemonListFragment : Fragment() {
 
     private fun attachObservers() {
         with(viewModel) {
-            isInitialLoading.observe(viewLifecycleOwner, Observer {
-                binding.progressBar.isVisible = it
-            })
-
-            isLoading.observe(viewLifecycleOwner, Observer {
-                binding.adapter?.loading(it)
-            })
-
-            networkError.observe(viewLifecycleOwner, Observer {
-                Toast.makeText(
-                    context,
-                    it ?: getString(R.string.message_generic_error),
-                    Toast.LENGTH_SHORT
-                ).show()
+            networkState.observe(viewLifecycleOwner, Observer {
+                when (it.status) {
+                    Status.IDLE,
+                    Status.SUCCESS -> {
+                        binding.progressBar.isVisible = false
+                    }
+                    Status.FIRST_LOADING -> {
+                        binding.progressBar.isVisible = true
+                    }
+                    Status.LOADING,
+                    Status.ERROR -> {
+                        binding.progressBar.isVisible = false
+                        binding.adapter?.setNetworkState(it)
+                    }
+                }
             })
 
             pokemonList.observe(viewLifecycleOwner, Observer {
@@ -65,11 +66,8 @@ class PokemonListFragment : Fragment() {
             })
 
             endReached.observe(viewLifecycleOwner, Observer {
-                Toast.makeText(
-                    context,
-                    getString(R.string.message_end_reached),
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(context, getString(R.string.message_end_reached), Toast.LENGTH_SHORT)
+                    .show()
             })
         }
     }
