@@ -70,14 +70,14 @@ class PokemonListItemBoundaryCallback constructor(
     }
 
     private fun onError(message: String?, itemAtEnd: PokemonListItem? = null) {
-        networkState.value = NetworkState(Status.ERROR, message)
+        networkState.postValue(NetworkState(Status.ERROR, message))
         itemAtEnd?.let {
             retry = { onItemAtEndLoaded(it) }
         } ?: run { retry = { onZeroItemsLoaded() } }
     }
 
     private fun onSuccess(pokemonListItem: List<PokemonListItem>) {
-        networkState.value = NetworkState(Status.SUCCESS)
+        networkState.postValue(NetworkState(Status.SUCCESS))
         retry = null
         coroutineScope.launch {
             withContext(Dispatchers.IO) {
