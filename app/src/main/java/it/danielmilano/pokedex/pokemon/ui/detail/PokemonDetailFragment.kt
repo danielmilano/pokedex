@@ -4,58 +4,29 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import com.google.android.material.snackbar.Snackbar
-import it.danielmilano.pokedex.base.BaseFragment
+import androidx.fragment.app.Fragment
 import it.danielmilano.pokedex.databinding.FragmentPokemonDetailBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class PokemonDetailFragment :
-    BaseFragment<PokemonDetailViewState, PokemonDetailViewEffect, PokemonDetailViewEvent, PokemonDetailViewModel>() {
-
-    override val viewModel: PokemonDetailViewModel by viewModel()
+class PokemonDetailFragment : Fragment() {
 
     private lateinit var binding: FragmentPokemonDetailBinding
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        super.onCreateView(inflater, container, savedInstanceState)
+    private val viewModel: PokemonDetailViewModel by viewModel()
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentPokemonDetailBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewModel = viewModel.apply {
+            arguments?.let { assignArgument(PokemonDetailFragmentArgs.fromBundle(it)) }
+        }
         return binding.root
     }
 
-    override fun renderViewState(viewState: PokemonDetailViewState) {
-        when (viewState.fetchStatus) {
-            is FetchStatus.Fetched -> {
-                binding.pokemon = viewState.pokemon
-            }
-            is FetchStatus.NotFetched -> {
-                arguments?.let {
-                    viewModel.process(
-                        PokemonDetailViewEvent.FetchPokemonDetail(
-                            PokemonDetailFragmentArgs.fromBundle(it).url
-                        )
-                    )
-                }
-            }
-            is FetchStatus.Fetching -> {
-
-            }
-        }
-    }
-
-    override fun renderViewEffect(viewEffect: PokemonDetailViewEffect) {
-        when (viewEffect) {
-            is PokemonDetailViewEffect.ShowSnackbar -> {
-                Snackbar.make(binding.root, viewEffect.message, Snackbar.LENGTH_SHORT).show()
-            }
-            is PokemonDetailViewEffect.ShowToast -> {
-                Toast.makeText(context, viewEffect.message, Toast.LENGTH_SHORT).show()
-            }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.retry.setOnClickListener {
+            viewModel.retry()
         }
     }
 }

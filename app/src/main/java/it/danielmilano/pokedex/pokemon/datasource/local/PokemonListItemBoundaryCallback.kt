@@ -3,7 +3,6 @@ package it.danielmilano.pokedex.pokemon.datasource.local
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedList
 import it.danielmilano.pokedex.api.PokemonApi
-import it.danielmilano.pokedex.base.BaseMutableLiveData
 import it.danielmilano.pokedex.database.dao.PokemonItemListDAO
 import it.danielmilano.pokedex.pokemon.model.NetworkState
 import it.danielmilano.pokedex.pokemon.model.PaginatedResult
@@ -41,7 +40,11 @@ class PokemonListItemBoundaryCallback constructor(
     override fun onItemAtEndLoaded(itemAtEnd: PokemonListItem) {
         networkState.postValue(NetworkState(Status.LOADING))
         itemAtEnd.nextPage?.let {
-            api.getDataList(it).enqueue(callback(itemAtEnd))
+            coroutineScope.launch {
+                withContext(Dispatchers.IO) {
+                    api.getDataList(it).enqueue(callback(itemAtEnd))
+                }
+            }
         } ?: run {
             networkState.postValue(NetworkState(Status.SUCCESS))
             endReached.postValue(true)

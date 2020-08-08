@@ -20,7 +20,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PokemonListFragment : Fragment() {
 
-    val viewModel: PokemonListViewModel by viewModel()
+    private val viewModel: PokemonListViewModel by viewModel()
 
     private lateinit var binding: FragmentPokemonListBinding
 
@@ -61,16 +61,13 @@ class PokemonListFragment : Fragment() {
                     }
                 }
             })
-
             error.observe(viewLifecycleOwner, Observer {
+                binding.progressBar.isVisible = false
                 binding.adapter?.setNetworkState(NetworkState(Status.ERROR, it))
             })
-
-
             pokemonList.observe(viewLifecycleOwner, Observer {
                 binding.adapter?.submitList(it)
             })
-
             endReached.observe(viewLifecycleOwner, Observer {
                 Toast.makeText(context, getString(R.string.message_end_reached), Toast.LENGTH_SHORT)
                     .show()
@@ -80,7 +77,10 @@ class PokemonListFragment : Fragment() {
 
     private fun navigateToPokemonDetail(item: PokemonListItem) {
         val direction =
-            PokemonListFragmentDirections.actionPokemonListFragmentToPokemonDetailFragment(item.url)
+            PokemonListFragmentDirections.actionPokemonListFragmentToPokemonDetailFragment(
+                item.url,
+                item.name
+            )
         navController.navigate(direction)
     }
 }

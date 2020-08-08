@@ -13,10 +13,10 @@ import it.danielmilano.pokedex.pokemon.model.Pokemon
 interface PokemonDAO {
 
     @Query("SELECT * FROM pokemon WHERE id = :id")
-    fun getById(id: String?): LiveData<Pokemon>
+    fun getById(id: String?): Pokemon?
 
     @Query("SELECT * FROM pokemon WHERE name = :name")
-    fun getByName(name: String?): LiveData<Pokemon>
+    fun getByName(name: String?): Pokemon?
 
     @Query("SELECT * FROM pokemon")
     fun all(): LiveData<List<Pokemon>>

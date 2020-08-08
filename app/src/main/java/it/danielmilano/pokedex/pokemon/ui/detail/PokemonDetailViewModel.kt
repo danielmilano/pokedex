@@ -1,53 +1,77 @@
 package it.danielmilano.pokedex.pokemon.ui.detail
 
-import android.app.Application
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import it.danielmilano.pokedex.base.BaseViewModel
 import it.danielmilano.pokedex.base.DataResponse
 import it.danielmilano.pokedex.database.dao.PokemonDAO
+import it.danielmilano.pokedex.pokemon.model.Pokemon
 import it.danielmilano.pokedex.usecase.GetPokemonDetailUseCase
-import kotlinx.coroutines.launch
-import kotlin.concurrent.thread
+import kotlinx.coroutines.*
 
 class PokemonDetailViewModel(
-    application: Application,
-    private val getPokemonDetailUseCase: GetPokemonDetailUseCase,
-    private val pokemonDAO: PokemonDAO
-) : BaseViewModel<PokemonDetailViewState, PokemonDetailViewEffect, PokemonDetailViewEvent>(
-    application
-) {
+    private val pokemonDAO: PokemonDAO,
+    private val getPokemonDetailUseCase: GetPokemonDetailUseCase
+) : ViewModel() {
 
-    init {
-        viewState = PokemonDetailViewState(fetchStatus = FetchStatus.NotFetched, pokemon = null)
-    }
+    val pokemonDetail: MediatorLiveData<Pokemon> = MediatorLiveData()
 
-    override fun process(viewEvent: PokemonDetailViewEvent) {
-        super.process(viewEvent)
-        when (viewEvent) {
-            is PokemonDetailViewEvent.OnSharePokemon -> {
-            }
-            is PokemonDetailViewEvent.FetchPokemonDetail -> {
-                fetchPokemonDetail(viewEvent.url)
-            }
-        }
-    }
+    val isLoading: MediatorLiveData<Boolean> = MediatorLiveData()
 
-    private fun fetchPokemonDetail(url: String) {
-        viewState = viewState.copy(fetchStatus = FetchStatus.Fetching)
+    val errorMessage: MediatorLiveData<String> = MediatorLiveData()
+
+    private lateinit var url: String
+
+    fun assignArgument(args: PokemonDetailFragmentArgs) {
+        url = args.url
         viewModelScope.launch {
-            when (val result = getPokemonDetailUseCase(url)) {
-                is DataResponse.Error -> {
-                    viewState = viewState.copy(fetchStatus = FetchStatus.Fetched)
-                    viewEffect = PokemonDetailViewEffect.ShowToast(message = result.message)
+            getPokemonByNameAsync(args.name).await()?.let {
+                withContext(Dispatchers.Main) {
+                    pokemonDetail.value = it
                 }
-                is DataResponse.Success -> {
-                    thread {
-                        pokemonDAO.add(result.data)
+            } ?: run {
+                getPokemonDetail(args.url)
+            }
+        }
+    }
+
+    private suspend fun getPokemonByNameAsync(name: String): Deferred<Pokemon?> {
+        return async {
+            pokemonDAO.getByName(name)
+        }
+    }
+
+    fun retry() {
+        errorMessage.value = null
+        getPokemonDetail(url)
+    }
+
+    private fun getPokemonDetail(url: String) {
+        getPokemonDetailUseCase(url).let { response ->
+            isLoading.value = true
+            isLoading.addSource(response) {
+                isLoading.value = false
+                when (response.value) {
+                    is DataResponse.Success -> {
+                        val result = (response.value as DataResponse.Success<Pokemon>).data
+                        viewModelScope.launch {
+                            withContext(Dispatchers.IO) {
+                                pokemonDAO.add(result)
+                            }
+                            pokemonDetail.postValue(result)
+                        }
                     }
-                    viewState =
-                        viewState.copy(fetchStatus = FetchStatus.Fetched, pokemon = result.data)
+                    is DataResponse.Error -> {
+                        val result = (it as DataResponse.Error<Pokemon>).message
+                        errorMessage.postValue(result)
+                    }
                 }
             }
         }
+    }
+
+    suspend fun <T> async(block: suspend CoroutineScope.() -> T): Deferred<T> {
+        return viewModelScope.async(Dispatchers.Default) { block() }
     }
 }
