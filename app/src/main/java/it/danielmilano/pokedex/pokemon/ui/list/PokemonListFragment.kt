@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import it.danielmilano.pokedex.R
 import it.danielmilano.pokedex.pokemon.adapter.PagedListAdapter
 import it.danielmilano.pokedex.databinding.FragmentPokemonListBinding
+import it.danielmilano.pokedex.pokemon.model.NetworkState
 import it.danielmilano.pokedex.pokemon.model.PokemonListItem
 import it.danielmilano.pokedex.pokemon.model.Status
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -60,6 +61,11 @@ class PokemonListFragment : Fragment() {
                     }
                 }
             })
+
+            error.observe(viewLifecycleOwner, Observer {
+                binding.adapter?.setNetworkState(NetworkState(Status.ERROR, it))
+            })
+
 
             pokemonList.observe(viewLifecycleOwner, Observer {
                 binding.adapter?.submitList(it)

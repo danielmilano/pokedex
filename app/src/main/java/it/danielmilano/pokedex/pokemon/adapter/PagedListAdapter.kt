@@ -20,9 +20,9 @@ class PagedListAdapter(
         PokemonListItem.DIFF_CALLBACK
     ) {
 
-    private var networkState: NetworkState = NetworkState.IDLE
+    private var networkState: NetworkState? = null
 
-    private fun hasExtraRow() = networkState == NetworkState.LOADING
+    private fun hasExtraRow() = networkState != null && networkState != NetworkState.SUCCESS
 
     override fun getItemViewType(position: Int): Int {
         return if (hasExtraRow() && position == itemCount - 1) {
@@ -64,6 +64,10 @@ class PagedListAdapter(
                 (holder as LoaderItemHolder).bind(networkState, retryCallback)
             }
         }
+    }
+
+    override fun getItemCount(): Int {
+        return super.getItemCount() + if (hasExtraRow()) 1 else 0
     }
 
     fun setNetworkState(newNetworkState: NetworkState) {

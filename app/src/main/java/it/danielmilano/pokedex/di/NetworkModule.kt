@@ -27,8 +27,8 @@ private fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
 private fun provideHttpClient(loggingInterceptor: HttpLoggingInterceptor): OkHttpClient =
     OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
+        .connectTimeout(10, TimeUnit.SECONDS)
+        .readTimeout(10, TimeUnit.SECONDS)
         .build()
 
 private fun provideConverterFactory() = GsonConverterFactory.create()

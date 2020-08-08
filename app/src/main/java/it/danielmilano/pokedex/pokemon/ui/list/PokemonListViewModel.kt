@@ -9,12 +9,13 @@ import it.danielmilano.pokedex.usecase.GetPagedListUseCase
 
 class PokemonListViewModel(private val getListUseCase: GetPagedListUseCase) : ViewModel() {
 
-    private val pagedListResult: MutableLiveData<PagedListResult<PokemonListItem>> =
-        MutableLiveData()
+    private val pagedListResult: MutableLiveData<PagedListResult<PokemonListItem>> = MutableLiveData()
 
     val pokemonList: LiveData<PagedList<PokemonListItem>> = pagedListResult.switchMap { it.result }
 
     val networkState: LiveData<NetworkState> = pagedListResult.switchMap { it.networkState }
+
+    val error : LiveData<String> = pagedListResult.switchMap { it.error }
 
     val endReached: LiveData<Boolean> = pagedListResult.switchMap { it.endReached }
 

@@ -1,5 +1,6 @@
 package it.danielmilano.pokedex.pokemon.datasource.local
 
+import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedList
 import it.danielmilano.pokedex.api.PokemonApi
 import it.danielmilano.pokedex.base.BaseMutableLiveData
@@ -26,9 +27,10 @@ class PokemonListItemBoundaryCallback constructor(
      * There is no sync on the state because paging will always call loadInitial first then wait
      * for it to return some success value before calling loadAfter.
      */
-    val networkState = BaseMutableLiveData<NetworkState>()
+    val networkState = MutableLiveData<NetworkState>()
+    val endReached = MutableLiveData<Boolean>()
+    val error = MutableLiveData<String>()
 
-    val endReached = BaseMutableLiveData<Boolean>()
     private var retry: (() -> Any)? = null
 
     override fun onZeroItemsLoaded() {
@@ -49,7 +51,7 @@ class PokemonListItemBoundaryCallback constructor(
 
     private fun callback(itemAtEnd: PokemonListItem? = null) = object : Callback<PaginatedResult> {
         override fun onFailure(call: Call<PaginatedResult>, t: Throwable) {
-            onError(t.message)
+            onError(t.message, itemAtEnd)
         }
 
         override fun onResponse(
@@ -63,17 +65,19 @@ class PokemonListItemBoundaryCallback constructor(
                     onError(response.errorBody().toString(), itemAtEnd)
                 }
             } ?: run {
-                onError(response.errorBody().toString())
+                onError(response.errorBody().toString(), itemAtEnd)
             }
         }
 
     }
 
     private fun onError(message: String?, itemAtEnd: PokemonListItem? = null) {
-        networkState.postValue(NetworkState(Status.ERROR, message))
+        error.postValue(message)
         itemAtEnd?.let {
             retry = { onItemAtEndLoaded(it) }
-        } ?: run { retry = { onZeroItemsLoaded() } }
+        } ?: run {
+            retry = { onZeroItemsLoaded() }
+        }
     }
 
     private fun onSuccess(pokemonListItem: List<PokemonListItem>) {

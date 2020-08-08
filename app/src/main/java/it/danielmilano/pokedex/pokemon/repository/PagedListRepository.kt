@@ -41,6 +41,7 @@ class PagedListRepository(
         return PagedListResult(
             result,
             boundaryCallback.networkState,
+            boundaryCallback.error,
             boundaryCallback.endReached
         ) { boundaryCallback.retryOnFailed() }
     }
