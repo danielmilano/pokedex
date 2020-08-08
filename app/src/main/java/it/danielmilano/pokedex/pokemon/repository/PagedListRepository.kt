@@ -42,7 +42,7 @@ class PagedListRepository(
             result,
             boundaryCallback.networkState,
             boundaryCallback.error,
-            boundaryCallback.endReached
+            boundaryCallback.lastPage
         ) { boundaryCallback.retryOnFailed() }
     }
 }

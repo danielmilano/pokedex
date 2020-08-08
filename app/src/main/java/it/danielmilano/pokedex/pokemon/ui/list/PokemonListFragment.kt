@@ -4,13 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
-import it.danielmilano.pokedex.R
 import it.danielmilano.pokedex.pokemon.adapter.PagedListAdapter
 import it.danielmilano.pokedex.databinding.FragmentPokemonListBinding
 import it.danielmilano.pokedex.pokemon.model.NetworkState
@@ -68,9 +66,8 @@ class PokemonListFragment : Fragment() {
             pokemonList.observe(viewLifecycleOwner, Observer {
                 binding.adapter?.submitList(it)
             })
-            endReached.observe(viewLifecycleOwner, Observer {
-                Toast.makeText(context, getString(R.string.message_end_reached), Toast.LENGTH_SHORT)
-                    .show()
+            lastPage.observe(viewLifecycleOwner, Observer {
+                binding.adapter?.setNetworkState(NetworkState(Status.SUCCESS))
             })
         }
     }

@@ -27,7 +27,7 @@ class PokemonListItemBoundaryCallback constructor(
      * for it to return some success value before calling loadAfter.
      */
     val networkState = MutableLiveData<NetworkState>()
-    val endReached = MutableLiveData<Boolean>()
+    val lastPage = MutableLiveData<Boolean>()
     val error = MutableLiveData<String>()
 
     private var retry: (() -> Any)? = null
@@ -47,7 +47,7 @@ class PokemonListItemBoundaryCallback constructor(
             }
         } ?: run {
             networkState.postValue(NetworkState(Status.SUCCESS))
-            endReached.postValue(true)
+            lastPage.postValue(true)
         }
     }
 

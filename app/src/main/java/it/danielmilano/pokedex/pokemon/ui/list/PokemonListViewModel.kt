@@ -17,7 +17,7 @@ class PokemonListViewModel(private val getListUseCase: GetPagedListUseCase) : Vi
 
     val error : LiveData<String> = pagedListResult.switchMap { it.error }
 
-    val endReached: LiveData<Boolean> = pagedListResult.switchMap { it.endReached }
+    val lastPage: LiveData<Boolean> = pagedListResult.switchMap { it.lastPage }
 
     init {
         getPokemonList()

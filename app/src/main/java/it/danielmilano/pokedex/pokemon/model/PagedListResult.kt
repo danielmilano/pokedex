@@ -8,6 +8,6 @@ class PagedListResult<T>(
     val result: LiveData<PagedList<T>> = MutableLiveData<PagedList<T>>(),
     val networkState: LiveData<NetworkState> = MutableLiveData(),
     val error: LiveData<String> = MutableLiveData(),
-    val endReached: LiveData<Boolean> = MutableLiveData(),
+    val lastPage: LiveData<Boolean> = MutableLiveData(),
     val retry: () -> Unit
 )
