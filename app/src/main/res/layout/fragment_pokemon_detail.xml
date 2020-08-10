@@ -8,8 +8,16 @@
         <import type="android.view.View" />
 
         <variable
-            name="viewModel"
-            type="it.danielmilano.pokedex.pokemon.ui.detail.PokemonDetailViewModel" />
+            name="pokemon"
+            type="it.danielmilano.pokedex.pokemon.model.Pokemon" />
+
+        <variable
+            name="errorMessage"
+            type="String" />
+
+        <variable
+            name="isLoading"
+            type="Boolean" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -23,14 +31,14 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:orientation="vertical"
-            android:visibility="@{viewModel.errorMessage != null ? View.VISIBLE : View.GONE}">
+            android:visibility="@{errorMessage != null ? View.VISIBLE : View.GONE}">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:gravity="center"
-                android:text="@{viewModel.errorMessage.toUpperCase()}"
+                android:text="@{errorMessage.toUpperCase()}"
                 android:textColor="@android:color/black"
                 android:textSize="18sp"
                 tools:text="No internet connection" />
@@ -48,7 +56,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="@{viewModel.errorMessage == null ? View.VISIBLE : View.GONE}">
+            android:visibility="@{errorMessage == null ? View.VISIBLE : View.GONE}">
 
             <TextView
                 android:id="@+id/nameTextView"
@@ -57,7 +65,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="36dp"
                 android:layout_marginEnd="8dp"
-                android:text="@{viewModel.pokemonDetail.name}"
+                android:text="@{pokemon.name}"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -74,7 +82,7 @@
                 android:layout_marginEnd="8dp"
                 android:text="@string/label_height"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:visibility="@{safeUnbox(viewModel.isLoading) ? View.GONE : View.VISIBLE}"
+                android:visibility="@{isLoading ? View.GONE : View.VISIBLE}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -86,9 +94,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
-                android:text="@{String.format(@string/height_value, viewModel.pokemonDetail.heightInMeters)}"
+                android:text="@{String.format(@string/height_value, pokemon.heightInMeters)}"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:visibility="@{safeUnbox(viewModel.isLoading) ? View.GONE : View.VISIBLE}"
+                android:visibility="@{isLoading ? View.GONE : View.VISIBLE}"
                 app:layout_constraintBottom_toBottomOf="@+id/heightTextView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -105,7 +113,7 @@
                 android:layout_marginEnd="8dp"
                 android:text="@string/label_weight"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:visibility="@{safeUnbox(viewModel.isLoading) ? View.GONE : View.VISIBLE}"
+                android:visibility="@{isLoading ? View.GONE : View.VISIBLE}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -117,9 +125,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
-                android:text="@{String.format(@string/weight_value, viewModel.pokemonDetail.weightInKilograms)}"
+                android:text="@{String.format(@string/weight_value, pokemon.weightInKilograms)}"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:visibility="@{safeUnbox(viewModel.isLoading) ? View.GONE : View.VISIBLE}"
+                android:visibility="@{isLoading ? View.GONE : View.VISIBLE}"
                 app:layout_constraintBottom_toBottomOf="@+id/weightTextView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -137,7 +145,7 @@
                 android:layout_marginBottom="32dp"
                 android:text="@string/label_base_exp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:visibility="@{safeUnbox(viewModel.isLoading) ? View.GONE : View.VISIBLE}"
+                android:visibility="@{isLoading ? View.GONE : View.VISIBLE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -151,7 +159,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
-                android:text="@{viewModel.pokemonDetail.displayExp}"
+                android:text="@{pokemon.displayExp}"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 app:layout_constraintBottom_toBottomOf="@+id/expTextView"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -168,7 +176,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/alpha_black"
-            android:visibility="@{safeUnbox(viewModel.isLoading) ? View.VISIBLE : View.GONE}"
+            android:visibility="@{isLoading ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
