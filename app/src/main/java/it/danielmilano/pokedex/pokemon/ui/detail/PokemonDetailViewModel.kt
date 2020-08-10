@@ -1,5 +1,6 @@
 package it.danielmilano.pokedex.pokemon.ui.detail
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -22,15 +23,15 @@ class PokemonDetailViewModel(
 
     private lateinit var url: String
 
-    fun getPokemonDetail(args: PokemonDetailFragmentArgs) {
-        url = args.url
+    fun getPokemonDetail(name: String, url: String) {
+        this.url = url
         viewModelScope.launch {
-            getPokemonByNameAsync(args.name).await()?.let {
+            getPokemonByNameAsync(name).await()?.let {
                 withContext(Dispatchers.Main) {
                     pokemon.value = it
                 }
             } ?: run {
-                getPokemonDetail(args.url)
+                getPokemonDetail(url)
             }
         }
     }
@@ -45,7 +46,8 @@ class PokemonDetailViewModel(
         getPokemonDetail(url)
     }
 
-    private fun getPokemonDetail(url: String) {
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun getPokemonDetail(url: String) {
         isLoading.value = true
         getPokemonDetailUseCase(url).let { response ->
             isLoading.addSource(response) {

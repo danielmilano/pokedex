@@ -1,12 +1,6 @@
 package it.danielmilano.pokedex.database.dao
 
-import androidx.lifecycle.LiveData
-import androidx.paging.DataSource
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import it.danielmilano.pokedex.pokemon.model.Pokemon
 
 @Dao
@@ -19,7 +13,7 @@ interface PokemonDAO {
     fun getByName(name: String?): Pokemon?
 
     @Query("SELECT * FROM pokemon")
-    fun all(): LiveData<List<Pokemon>>
+    fun all(): List<Pokemon>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun add(pokemon: Pokemon)

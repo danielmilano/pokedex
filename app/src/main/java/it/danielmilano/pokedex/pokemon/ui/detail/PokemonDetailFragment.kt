@@ -28,7 +28,8 @@ class PokemonDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         arguments?.let {
-            viewModel.getPokemonDetail(PokemonDetailFragmentArgs.fromBundle(it))
+            val bundle = PokemonDetailFragmentArgs.fromBundle(it)
+            viewModel.getPokemonDetail(bundle.name, bundle.url)
         }
         binding.retry.setOnClickListener {
             viewModel.retry()

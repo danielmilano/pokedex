@@ -1,22 +1,17 @@
 package it.danielmilano.pokedex.database.dao
 
-import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import it.danielmilano.pokedex.pokemon.model.PokemonListItem
 
 @Dao
 interface PokemonItemListDAO {
 
     @Query("SELECT * FROM pokemonlistitem WHERE name = :name")
-    fun getById(name: String?): LiveData<PokemonListItem>
+    fun getById(name: String?): PokemonListItem
 
     @Query("SELECT * FROM pokemonlistitem WHERE name = :url")
-    fun getByUrl(url: String?): LiveData<PokemonListItem>
+    fun getByUrl(url: String?): PokemonListItem
 
     @Query("SELECT * FROM pokemonlistitem")
     fun all(): DataSource.Factory<Int, PokemonListItem>
@@ -28,5 +23,5 @@ interface PokemonItemListDAO {
     fun deleteAll()
 
     @Delete
-    fun delete(model: PokemonListItem)
+    fun delete(pokemonListItem: PokemonListItem)
 }
