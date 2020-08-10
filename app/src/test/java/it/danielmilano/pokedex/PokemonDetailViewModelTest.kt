@@ -58,14 +58,13 @@ class PokemonDetailViewModelTest {
 
     @After
     @Throws(IOException::class)
-    fun closeDb() = runBlocking {
-        this.launch {
+    fun closeDb() = testDispatcher.runBlockingTest {
+        testScope.launch {
             withContext(Dispatchers.IO) {
                 pokemonDAO.deleteAll()
                 db.close()
             }
         }
-        return@runBlocking
     }
 
     @Test
@@ -81,7 +80,7 @@ class PokemonDetailViewModelTest {
     }
 
     @Test
-    fun getPokemonDetailFirstTime()  = testDispatcher.runBlockingTest {
+    fun getPokemonDetailFirstTime() = testDispatcher.runBlockingTest {
         testScope.launch {
             withContext(Dispatchers.IO) {
                 viewModel.getPokemonDetail(pokemonListItem.name, pokemonListItem.url)
