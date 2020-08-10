@@ -8,9 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import it.danielmilano.pokedex.R
 import it.danielmilano.pokedex.databinding.ItemLoaderBinding
 import it.danielmilano.pokedex.databinding.ItemPokemonBinding
-import it.danielmilano.pokedex.pokemon.model.NetworkState
+import it.danielmilano.pokedex.base.NetworkState
 import it.danielmilano.pokedex.pokemon.model.PokemonListItem
-import it.danielmilano.pokedex.pokemon.model.Status
+import it.danielmilano.pokedex.base.Status
 
 class PagedListAdapter(
     private val onItemClick: (PokemonListItem) -> Unit,

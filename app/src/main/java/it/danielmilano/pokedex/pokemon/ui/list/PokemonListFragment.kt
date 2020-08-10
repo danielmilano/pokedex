@@ -11,9 +11,9 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import it.danielmilano.pokedex.pokemon.adapter.PagedListAdapter
 import it.danielmilano.pokedex.databinding.FragmentPokemonListBinding
-import it.danielmilano.pokedex.pokemon.model.NetworkState
+import it.danielmilano.pokedex.base.NetworkState
 import it.danielmilano.pokedex.pokemon.model.PokemonListItem
-import it.danielmilano.pokedex.pokemon.model.Status
+import it.danielmilano.pokedex.base.Status
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PokemonListFragment : Fragment() {
@@ -61,13 +61,22 @@ class PokemonListFragment : Fragment() {
             })
             error.observe(viewLifecycleOwner, Observer {
                 binding.progressBar.isVisible = false
-                binding.adapter?.setNetworkState(NetworkState(Status.ERROR, it))
+                binding.adapter?.setNetworkState(
+                    NetworkState(
+                        Status.ERROR,
+                        it
+                    )
+                )
             })
             pokemonList.observe(viewLifecycleOwner, Observer {
                 binding.adapter?.submitList(it)
             })
             lastPage.observe(viewLifecycleOwner, Observer {
-                binding.adapter?.setNetworkState(NetworkState(Status.SUCCESS))
+                binding.adapter?.setNetworkState(
+                    NetworkState(
+                        Status.SUCCESS
+                    )
+                )
             })
         }
     }

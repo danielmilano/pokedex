@@ -2,8 +2,8 @@ package it.danielmilano.pokedex.pokemon.ui.list
 
 import androidx.lifecycle.*
 import androidx.paging.PagedList
-import it.danielmilano.pokedex.pokemon.model.NetworkState
-import it.danielmilano.pokedex.pokemon.model.PagedListResult
+import it.danielmilano.pokedex.base.NetworkState
+import it.danielmilano.pokedex.base.PagedListResult
 import it.danielmilano.pokedex.pokemon.model.PokemonListItem
 import it.danielmilano.pokedex.usecase.GetPagedListUseCase
 

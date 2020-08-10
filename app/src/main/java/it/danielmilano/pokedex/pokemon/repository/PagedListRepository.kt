@@ -5,7 +5,7 @@ import androidx.paging.PagedList
 import it.danielmilano.pokedex.api.PokemonApi
 import it.danielmilano.pokedex.database.dao.PokemonItemListDAO
 import it.danielmilano.pokedex.pokemon.datasource.local.PokemonListItemBoundaryCallback
-import it.danielmilano.pokedex.pokemon.model.PagedListResult
+import it.danielmilano.pokedex.base.PagedListResult
 import it.danielmilano.pokedex.pokemon.model.PokemonListItem
 import kotlinx.coroutines.CoroutineScope
 

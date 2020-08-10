@@ -4,10 +4,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedList
 import it.danielmilano.pokedex.api.PokemonApi
 import it.danielmilano.pokedex.database.dao.PokemonItemListDAO
-import it.danielmilano.pokedex.pokemon.model.NetworkState
+import it.danielmilano.pokedex.base.NetworkState
 import it.danielmilano.pokedex.pokemon.model.PaginatedResult
 import it.danielmilano.pokedex.pokemon.model.PokemonListItem
-import it.danielmilano.pokedex.pokemon.model.Status
+import it.danielmilano.pokedex.base.Status
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -33,12 +33,20 @@ class PokemonListItemBoundaryCallback constructor(
     private var retry: (() -> Any)? = null
 
     override fun onZeroItemsLoaded() {
-        networkState.postValue(NetworkState(Status.FIRST_LOADING))
+        networkState.postValue(
+            NetworkState(
+                Status.FIRST_LOADING
+            )
+        )
         api.getInitialDataList().enqueue(callback())
     }
 
     override fun onItemAtEndLoaded(itemAtEnd: PokemonListItem) {
-        networkState.postValue(NetworkState(Status.LOADING))
+        networkState.postValue(
+            NetworkState(
+                Status.LOADING
+            )
+        )
         itemAtEnd.nextPage?.let {
             coroutineScope.launch {
                 withContext(Dispatchers.IO) {
@@ -46,7 +54,11 @@ class PokemonListItemBoundaryCallback constructor(
                 }
             }
         } ?: run {
-            networkState.postValue(NetworkState(Status.SUCCESS))
+            networkState.postValue(
+                NetworkState(
+                    Status.SUCCESS
+                )
+            )
             lastPage.postValue(true)
         }
     }
@@ -84,7 +96,11 @@ class PokemonListItemBoundaryCallback constructor(
     }
 
     private fun onSuccess(pokemonListItem: List<PokemonListItem>) {
-        networkState.postValue(NetworkState(Status.SUCCESS))
+        networkState.postValue(
+            NetworkState(
+                Status.SUCCESS
+            )
+        )
         retry = null
         coroutineScope.launch {
             withContext(Dispatchers.IO) {

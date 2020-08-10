@@ -1,4 +1,4 @@
-package it.danielmilano.pokedex.pokemon.model
+package it.danielmilano.pokedex.base
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
