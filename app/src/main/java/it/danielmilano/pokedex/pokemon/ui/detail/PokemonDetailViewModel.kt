@@ -4,14 +4,11 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import it.danielmilano.pokedex.base.DataResponse
-import it.danielmilano.pokedex.database.dao.PokemonDAO
 import it.danielmilano.pokedex.pokemon.model.Pokemon
 import it.danielmilano.pokedex.usecase.GetPokemonDetailUseCase
 import kotlinx.coroutines.*
 
 class PokemonDetailViewModel(
-    private val pokemonDAO: PokemonDAO,
     private val getPokemonDetailUseCase: GetPokemonDetailUseCase
 ) : ViewModel() {
 
@@ -21,60 +18,28 @@ class PokemonDetailViewModel(
 
     val errorMessage: MediatorLiveData<String> = MediatorLiveData()
 
+    private lateinit var name: String
     private lateinit var url: String
 
-    fun getPokemonDetail(name: String, url: String) {
-        this.url = url
-        viewModelScope.launch {
-            getPokemonByNameAsync(name).await()?.let {
-                withContext(Dispatchers.Main) {
-                    pokemon.value = it
-                }
-            } ?: run {
-                getPokemonDetail(url)
-            }
-        }
-    }
-
-    private suspend fun getPokemonByNameAsync(name: String): Deferred<Pokemon?> {
-        return async {
-            pokemonDAO.getByName(name)
-        }
-    }
-
     fun retry() {
-        getPokemonDetail(url)
+        getPokemonDetail(name, url)
     }
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    fun getPokemonDetail(url: String) {
+    fun getPokemonDetail(name: String, url: String) {
+        this.name = name
+        this.url = url
         isLoading.value = true
-        getPokemonDetailUseCase(url).let { response ->
-            isLoading.addSource(response) {
-                isLoading.value = false
-            }
-            pokemon.addSource(response) {
-                if (response.value is DataResponse.Success<Pokemon>) {
-                    val result = (response.value as DataResponse.Success<Pokemon>).data
-                    errorMessage.value = null
-                    pokemon.value = result
-                    viewModelScope.launch {
-                        withContext(Dispatchers.IO) {
-                            pokemonDAO.add(result)
-                        }
-                    }
-                }
-            }
-            errorMessage.addSource(response) {
-                if (response.value is DataResponse.Error<Pokemon>) {
-                    pokemon.value = null
-                    errorMessage.value = (response.value as DataResponse.Error<Pokemon>).message
-                }
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val result = getPokemonDetailUseCase(name, url)
+                isLoading.postValue(false)
+                errorMessage.postValue(null)
+                pokemon.postValue(result)
+            } catch (e: Exception) {
+                isLoading.postValue(false)
+                pokemon.postValue(null)
+                errorMessage.postValue(e.message)
             }
         }
-    }
-
-    private suspend fun <T> async(block: suspend CoroutineScope.() -> T): Deferred<T> {
-        return viewModelScope.async(Dispatchers.Default) { block() }
     }
 }

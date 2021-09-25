@@ -5,13 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.observe
 import it.danielmilano.pokedex.databinding.FragmentPokemonDetailBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PokemonDetailFragment : Fragment() {
 
-    private lateinit var binding: FragmentPokemonDetailBinding
+    private var _binding: FragmentPokemonDetailBinding? = null
+    private val binding get() = _binding!!
 
     private val viewModel: PokemonDetailViewModel by viewModel()
 
@@ -19,8 +19,8 @@ class PokemonDetailFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentPokemonDetailBinding.inflate(inflater, container, false)
+    ): View {
+        _binding = FragmentPokemonDetailBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
@@ -43,5 +43,10 @@ class PokemonDetailFragment : Fragment() {
         viewModel.pokemon.observe(viewLifecycleOwner) {
             binding.pokemon = it
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

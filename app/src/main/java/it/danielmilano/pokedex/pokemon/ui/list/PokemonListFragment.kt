@@ -20,7 +20,8 @@ class PokemonListFragment : Fragment() {
 
     private val viewModel: PokemonListViewModel by viewModel()
 
-    private lateinit var binding: FragmentPokemonListBinding
+    private var _binding: FragmentPokemonListBinding? = null
+    private val binding get() = _binding!!
 
     private val navController: NavController by lazy { findNavController() }
 
@@ -28,9 +29,9 @@ class PokemonListFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         super.onCreateView(inflater, container, savedInstanceState)
-        binding = FragmentPokemonListBinding.inflate(inflater, container, false)
+        _binding = FragmentPokemonListBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.adapter = PagedListAdapter(this::navigateToPokemonDetail) { viewModel.retry() }
         return binding.root
@@ -39,6 +40,11 @@ class PokemonListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         attachObservers()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun attachObservers() {

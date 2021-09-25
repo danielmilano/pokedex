@@ -16,5 +16,5 @@ interface PokemonApi {
     fun getDataList(@Url url: String): Call<PaginatedResult>
 
     @GET
-    fun getPokemonDetail(@Url url: String): Call<Pokemon>
+    suspend fun getPokemonDetail(@Url url: String): Pokemon
 }
