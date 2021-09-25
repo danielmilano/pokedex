@@ -24,7 +24,7 @@ class PagedListRepository(
             .build()
 
         val livePageListBuilder =
-            LivePagedListBuilder<Int, PokemonListItem>(
+            LivePagedListBuilder(
                 pokemonItemListDAO.all(),
                 config
             )

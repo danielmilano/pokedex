@@ -15,7 +15,7 @@ class PokemonListViewModel(private val getListUseCase: GetPagedListUseCase) : Vi
 
     val networkState: LiveData<NetworkState> = pagedListResult.switchMap { it.networkState }
 
-    val error : LiveData<String> = pagedListResult.switchMap { it.error }
+    val error : LiveData<String?> = pagedListResult.switchMap { it.error }
 
     val lastPage: LiveData<Boolean> = pagedListResult.switchMap { it.lastPage }
 

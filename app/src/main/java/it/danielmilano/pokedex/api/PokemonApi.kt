@@ -10,10 +10,10 @@ import retrofit2.http.Url
 interface PokemonApi {
 
     @GET("pokemon")
-    fun getInitialDataList(): Call<PaginatedResult>
+    suspend fun getInitialDataList(): PaginatedResult
 
     @GET
-    fun getDataList(@Url url: String): Call<PaginatedResult>
+    suspend fun getDataList(@Url url: String): PaginatedResult
 
     @GET
     suspend fun getPokemonDetail(@Url url: String): Pokemon

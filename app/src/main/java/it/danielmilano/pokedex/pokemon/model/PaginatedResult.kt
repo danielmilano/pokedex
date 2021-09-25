@@ -7,6 +7,6 @@ data class PaginatedResult(
     val results: List<PokemonListItem>
 ) {
     val resultsWithPage: List<PokemonListItem>
-        get() = results.apply { forEach { it.nextPage = next } }
+        get() = results.onEach { it.nextPage = next }
 
 }

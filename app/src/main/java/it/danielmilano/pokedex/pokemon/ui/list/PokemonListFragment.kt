@@ -65,7 +65,7 @@ class PokemonListFragment : Fragment() {
                     }
                 }
             })
-            error.observe(viewLifecycleOwner, Observer {
+            error.observe(viewLifecycleOwner, {
                 binding.progressBar.isVisible = false
                 binding.adapter?.setNetworkState(
                     NetworkState(
@@ -74,10 +74,10 @@ class PokemonListFragment : Fragment() {
                     )
                 )
             })
-            pokemonList.observe(viewLifecycleOwner, Observer {
+            pokemonList.observe(viewLifecycleOwner, {
                 binding.adapter?.submitList(it)
             })
-            lastPage.observe(viewLifecycleOwner, Observer {
+            lastPage.observe(viewLifecycleOwner, {
                 binding.adapter?.setNetworkState(
                     NetworkState(
                         Status.SUCCESS
