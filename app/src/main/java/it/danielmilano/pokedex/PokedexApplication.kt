@@ -7,6 +7,7 @@ import it.danielmilano.pokedex.di.pokemonModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
+import org.koin.core.logger.Level
 
 val modules = listOf(networkModule, databaseModule, pokemonModule)
 
@@ -16,8 +17,8 @@ class PokedexApplication : Application() {
         super.onCreate()
 
         startKoin {
-            androidLogger()
             androidContext(this@PokedexApplication)
+            androidLogger(Level.NONE)
             modules(modules)
         }
     }
